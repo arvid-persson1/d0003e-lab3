@@ -21,7 +21,7 @@ void blink(const int targetTicks) {
     }
 }
 
-void button(__attribute__((unused)) int _x) {
+void button(int presses) {
     LCDDR13 ^= 1;
     bool state = false;
 
@@ -31,6 +31,7 @@ void button(__attribute__((unused)) int _x) {
         } else if (state) {
             LCDDR13 ^= 1;
             LCDDR18 ^= 1;
+            printAt(++presses, 4);
             state = false;
         }
     }
