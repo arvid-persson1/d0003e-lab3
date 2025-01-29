@@ -4,11 +4,11 @@
 #include <stdint.h>
 #include <avr/io.h>
 
-void primes(const int pos) {
+void primes(void) {
     unsigned long i = 1;
     while (true) {
         if (isPrime(i))
-            printAt(i, pos);
+            printAt(i, 0);
         i++;
     }
 }
@@ -21,7 +21,7 @@ void blink(const int targetTicks) {
     }
 }
 
-void button(void) {
+void button(__attribute__((unused)) int _x) {
     LCDDR13 ^= 1;
     bool state = false;
 
@@ -37,7 +37,7 @@ void button(void) {
 }
 
 int main() {
-    spawn(primes, 0);
     spawn(blink, 10);
-    button();
+    spawn(button, 0);
+    primes();
 }

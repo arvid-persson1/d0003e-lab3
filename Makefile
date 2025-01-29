@@ -8,14 +8,7 @@ TARGET_DIR := ./target
 OBJ_DIR := $(TARGET_DIR)/obj
 BINARY := $(TARGET_DIR)/main
 
-# TODO: make `PART` not required for `clean`.
-ifeq ($(PART),)
-$(error PART is not set)
-endif
-
-COMMON_SOURCES := $(filter-out $(SRC_DIR)/part%.c, $(wildcard $(SRC_DIR)/*.c))
-PART_SRC := $(SRC_DIR)/part$(PART).c
-SOURCES := $(COMMON_SOURCES) $(PART_SRC)
+SOURCES := $(wildcard $(SRC_DIR)/*.c)
 OBJECTS := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
 
 .PHONY: all
