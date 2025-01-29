@@ -8,10 +8,10 @@ void initLcd(void);
 void initTimer(void);
 void initButton(void);
 
-void clearChar(const int pos);
-void writeChar(const char ch, const int pos);
-void printAt(const long num, const int pos);
+void clearChar(const int);
+void writeChar(const char, const int);
+void printAt(const long, const int);
 
-bool isPrime(const unsigned long n);
+bool isPrime(const unsigned long);
 
 #endif

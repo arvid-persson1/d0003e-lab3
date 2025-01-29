@@ -8,7 +8,7 @@
 
 struct ThreadBlock;
 typedef struct ThreadBlock *Thread;
-void spawn(void (* const function)(int), const int arg);
+void spawn(void (* const)(int), const int);
 void yield(void);
 
 extern const uint16_t TICKS_PER_SECOND;
@@ -21,8 +21,8 @@ typedef struct Mutex {
 } Mutex;
 
 #define MUTEX_INIT {0, 0}
-void lock(Mutex * const m);
-void unlock(Mutex * const m);
+void lock(Mutex * const);
+void unlock(Mutex * const);
 
 #endif
 

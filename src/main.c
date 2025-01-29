@@ -8,7 +8,7 @@ void primes(const int pos) {
     unsigned long i = 1;
     while (true) {
         if (isPrime(i))
-            printAt(i, 0);
+            printAt(i, pos);
         i++;
     }
 }
@@ -29,7 +29,7 @@ void blink(const int16_t freq) {
     }
 }
 
-void button(void) {
+void button(__attribute__((unused)) int _x) {
     LCDDR13 ^= 1;
     bool state = false;
 
@@ -45,8 +45,7 @@ void button(void) {
 }
 
 int main() {
-    spawn(primes, 0);
-    spawn(blink, 31250);
-    button();
+    spawn(blink, 0);
+    spawn(button, 4);
     primes(0);
 }
