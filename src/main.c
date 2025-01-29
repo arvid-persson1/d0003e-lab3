@@ -4,11 +4,11 @@
 #include <stdint.h>
 #include <avr/io.h>
 
-void primes(void) {
+void primes(const int pos) {
     unsigned long i = 1;
     while (true) {
         if (isPrime(i))
-            printAt(i, 0);
+            printAt(i, pos);
         i++;
     }
 }
@@ -22,9 +22,10 @@ void blink(int targetTicks) {
     }
 }
 
-void button(int presses) {
+void button(const int pos) {
     LCDDR13 ^= 1;
     bool state = false;
+    uint16_t presses = 0;
 
     while(true) {
         if (PINB & SET(PINB7)) {
@@ -32,7 +33,7 @@ void button(int presses) {
         } else if (state) {
             LCDDR13 ^= 1;
             LCDDR18 ^= 1;
-            printAt(++presses, 4);
+            printAt(++presses, pos);
             state = false;
         }
     }
@@ -46,6 +47,6 @@ int main() {
     setButtonInterrupt();
     
     spawn(blink, TICKS_PER_SECOND);
-    spawn(button, 0);
-    primes();
+    spawn(button, 4);
+    primes(0);
 }
