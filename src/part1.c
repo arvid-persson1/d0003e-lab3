@@ -13,19 +13,11 @@ void primes(const int pos) {
     }
 }
 
-void blink(const int16_t freq) {
-    int16_t last = TCNT1, acc = 0;
-
+void blink(const int targetTicks) {
     while (true) {
-        int16_t time = TCNT1,
-                diff = time - last;
-        last = time;
-        acc += diff;
-
-        if (acc >= freq) {
-            LCDDR3 ^= 1;
-            acc -= freq;
-        }
+        while (timerRead() < targetTicks);
+        timerReset();
+        LCDDR3 ^= 1;
     }
 }
 
@@ -46,6 +38,6 @@ void button(void) {
 
 int main() {
     spawn(primes, 0);
-    spawn(blink, 31250);
+    spawn(blink, 10);
     button();
 }

@@ -144,9 +144,21 @@ ISR(PCINT1_vect) {
         yield();
 }
 
+// Synchronization is omitted; precision is irrelevant.
+static uint_fast8_t ticks = 0;
+
 // Timer.
 ISR(TIMER1_COMPA_vect) {
+    ticks++;
     yield();
+}
+
+uint_fast8_t timerRead(void) {
+    return ticks;
+}
+
+void timerReset(void) {
+    ticks = 0;
 }
 
 void lock(Mutex * const m) {
