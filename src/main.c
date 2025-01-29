@@ -8,16 +8,24 @@ void primes(const int pos) {
     unsigned long i = 1;
     while (true) {
         if (isPrime(i))
-            printAt(i, pos);
+            printAt(i, 0);
         i++;
     }
 }
 
-void blink(const int targetTicks) {
+void blink(const int16_t freq) {
+    int16_t last = TCNT1, acc = 0;
+
     while (true) {
-        while (timerRead() < targetTicks);
-        timerReset();
-        LCDDR3 ^= 1;
+        int16_t time = TCNT1,
+                diff = time - last;
+        last = time;
+        acc += diff;
+
+        if (acc >= freq) {
+            LCDDR3 ^= 1;
+            acc -= freq;
+        }
     }
 }
 
@@ -38,6 +46,7 @@ void button(void) {
 
 int main() {
     spawn(primes, 0);
-    spawn(blink, 10);
+    spawn(blink, 31250);
     button();
+    primes(0);
 }

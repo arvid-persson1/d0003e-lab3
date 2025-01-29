@@ -13,7 +13,8 @@
 #define SETSTACK(buf, a) *((unsigned int*)(buf) + 8) = (unsigned int)(a) + STACKSIZE - 4; \
                          *((unsigned int*)(buf) + 9) = (unsigned int)(a) + STACKSIZE - 4
 
-static const uint16_t FREQ = 8000000 / 1024 * 0.05;
+const uint16_t TICKS_PER_SECOND = 2;
+static const uint16_t FREQ = 8000000 / 1024 / TICKS_PER_SECOND;
 
 struct ThreadBlock {
     void (*function)(int);
@@ -37,11 +38,6 @@ static void initialize(void) {
         threads[i].next = &threads[i + 1];
 
     threads[NTHREADS - 1].next = NULL;
-
-    initClk();
-    initLcd();
-    initTimer();
-    initButton();
 
     // PCIE1: enable PCINT(15:8) interrupts.
     EIMSK  = SET(PCIE1);
@@ -68,17 +64,11 @@ static void initialize(void) {
     initialized = true;
 }
 
-static void enqueue(const Thread p, Thread * const queue) {
-    p->next = NULL;
+// `enqueue` and `dequeue` should probably be renamed.
 
-    if (*queue == NULL) {
-        *queue = p;
-    } else {
-        Thread q = *queue;
-        while (q->next)
-            q = q->next;
-        q->next = p;
-    }
+static void enqueue(const Thread p, Thread * const queue) {
+    p->next = *queue;
+    *queue = p;
 }
 
 static Thread dequeue(Thread * const queue) {
@@ -118,6 +108,10 @@ void spawn(void (* const function)(const int), const int arg) {
         current->function(current->arg);
         DISABLE();
 
+        // thread next = dequeue(&readyQ);
+        // enqueue(current, &freeQ);
+        // dispatch(next);
+
         enqueue(current, &freeQ);
         dispatch(dequeue(&readyQ));
     }
@@ -144,21 +138,9 @@ ISR(PCINT1_vect) {
         yield();
 }
 
-// Synchronization is omitted; precision is irrelevant.
-static uint_fast8_t ticks = 0;
-
 // Timer.
 ISR(TIMER1_COMPA_vect) {
-    ticks++;
-    yield();
-}
-
-uint_fast8_t timerRead(void) {
-    return ticks;
-}
-
-void timerReset(void) {
-    ticks = 0;
+    // TODO: 
 }
 
 void lock(Mutex * const m) {
