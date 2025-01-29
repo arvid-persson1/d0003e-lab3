@@ -37,6 +37,13 @@ void initButton(void) {
     PORTB = SET(PB7);
 }
 
+void setButtonInterrupt(void) {
+    // PCIE1: enable PCINT(15:8) interrupts.
+    EIMSK  = SET(PCIE1);
+    // PCIN15: enable PCINT15 interrupt.
+    PCMSK1 = SET(PCINT15);
+}
+
 void clearChar(const int pos) {
     if (pos < 0 || pos > 5)
         return;

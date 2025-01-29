@@ -11,6 +11,7 @@ typedef struct ThreadBlock *Thread;
 void spawn(void (* const function)(int), const int arg);
 void yield(void);
 
+extern const uint16_t TICKS_PER_SECOND;
 uint_fast8_t timerRead(void);
 void timerReset(void);
 

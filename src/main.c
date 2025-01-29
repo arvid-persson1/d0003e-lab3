@@ -13,7 +13,8 @@ void primes(void) {
     }
 }
 
-void blink(const int targetTicks) {
+void blink(int targetTicks) {
+    targetTicks /= 2;
     while (true) {
         while (timerRead() < targetTicks);
         timerReset();
@@ -38,7 +39,13 @@ void button(int presses) {
 }
 
 int main() {
-    spawn(blink, 10);
+    initClk();
+    initLcd();
+    initTimer();
+    initButton();
+    setButtonInterrupt();
+    
+    spawn(blink, TICKS_PER_SECOND);
     spawn(button, 0);
     primes();
 }

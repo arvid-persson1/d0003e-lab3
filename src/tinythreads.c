@@ -13,7 +13,8 @@
 #define SETSTACK(buf, a) *((unsigned int*)(buf) + 8) = (unsigned int)(a) + STACKSIZE - 4; \
                          *((unsigned int*)(buf) + 9) = (unsigned int)(a) + STACKSIZE - 4
 
-static const uint16_t FREQ = 8000000 / 1024 * 0.05;
+const uint16_t TICKS_PER_SECOND = 20;
+static const uint16_t FREQ = 8000000 / 1024 / TICKS_PER_SECOND;
 
 struct ThreadBlock {
     void (*function)(int);
@@ -38,17 +39,6 @@ static void initialize(void) {
 
     threads[NTHREADS - 1].next = NULL;
 
-    initClk();
-    initLcd();
-    initTimer();
-    initButton();
-
-    // PCIE1: enable PCINT(15:8) interrupts.
-    EIMSK  = SET(PCIE1);
-    // PCIN15: enable PCINT15 interrupt.
-    PCMSK1 = SET(PCINT15);
-    
-    // Part 2 step 2 init:
     // COM1A(1:0): set OC1A on compare match.
     TCCR1A = SET(COM1A1) | SET(COM1A0);
     // WGM1(3:2): CTC mode.
