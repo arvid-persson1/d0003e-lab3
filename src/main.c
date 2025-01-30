@@ -14,43 +14,32 @@ void primes(const int pos) {
     }
 }
 
-Mutex blinkMutex = MUTEX_INIT;
-
 void blink(__attribute__((unused)) int _x) {
-    while (true) {
-        lock(&blinkMutex);
-        LCDDR3 ^= 1;
-    }
+    LCDDR3 ^= 1;
 }
 
-Mutex buttonMutex = MUTEX_INIT;
+static bool state = false;
+static uint16_t presses = 0;
 
 void button(const int pos) {
-    LCDDR13 ^= 1;
-    bool state = false;
-    uint16_t presses = 0;
-
-    while(true) {
-        lock(&buttonMutex);
-        if (PINB & SET(PINB7)) {
-            state = true;
-        } else if (state) {
-            LCDDR13 ^= 1;
-            LCDDR18 ^= 1;
-            printAt(++presses, pos);
-            state = false;
-        }
+    if (PINB & SET(PINB7)) {
+        state = true;
+    } else if (state) {
+        LCDDR13 ^= 1;
+        LCDDR18 ^= 1;
+        printAt(++presses, pos);
+        state = false;
     }
 }
 
 // Timer.
 ISR(TIMER1_COMPA_vect) {
-    unlock(&blinkMutex);
+    spawn(blink, 0);
 }
 
 // Joystick input.
 ISR(PCINT1_vect) {
-    unlock(&buttonMutex);
+    spawn(button, 4);
 }
 
 int main() {
@@ -61,10 +50,7 @@ int main() {
     setTimerInterrupt();
     setButtonInterrupt();
 
-    lock(&blinkMutex);
-    lock(&buttonMutex);
-    
-    spawn(blink, TICKS_PER_SECOND);
-    spawn(button, 4);
+    LCDDR13 ^= 1;
+
     primes(0);
 }
