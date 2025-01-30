@@ -25,4 +25,3 @@ void lock(Mutex * const);
 void unlock(Mutex * const);
 
 #endif
-
