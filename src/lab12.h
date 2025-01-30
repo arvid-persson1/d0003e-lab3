@@ -8,6 +8,7 @@ void initLcd(void);
 void initTimer(void);
 void initButton(void);
 
+void setTimerInterrupt(void);
 void setButtonInterrupt(void);
 
 void clearChar(const int);

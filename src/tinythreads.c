@@ -13,9 +13,6 @@
 #define SETSTACK(buf, a) *((unsigned int*)(buf) + 8) = (unsigned int)(a) + STACKSIZE - 4; \
                          *((unsigned int*)(buf) + 9) = (unsigned int)(a) + STACKSIZE - 4
 
-const uint16_t TICKS_PER_SECOND = 20;
-static const uint16_t FREQ = 8000000 / 1024 / TICKS_PER_SECOND;
-
 struct ThreadBlock {
     void (*function)(int);
     int arg;

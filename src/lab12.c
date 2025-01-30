@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <avr/io.h>
+#include <avr/interrupt.h>
+
+#define DISABLE()       cli()
+#define ENABLE()        sei()
 
 #define SET(x) (1 << x)
 
@@ -36,6 +40,9 @@ void initTimer(void) {
 void initButton(void) {
     PORTB = SET(PB7);
 }
+
+const uint16_t TICKS_PER_SECOND = 20;
+static const uint16_t FREQ = 8000000 / 1024 / TICKS_PER_SECOND;
 
 void setTimerInterrupt(void) {
     // COM1A(1:0): set OC1A on compare match.
