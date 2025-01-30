@@ -64,7 +64,7 @@ int main() {
     lock(&blinkMutex);
     lock(&buttonMutex);
     
-    spawn(blink, TICKS_PER_SECOND);
+    spawn(blink, 0);
     spawn(button, 4);
     primes(0);
 }
