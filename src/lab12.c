@@ -37,6 +37,24 @@ void initButton(void) {
     PORTB = SET(PB7);
 }
 
+void setTimerInterrupt(void) {
+    // COM1A(1:0): set OC1A on compare match.
+    TCCR1A = SET(COM1A1) | SET(COM1A0);
+    // WGM1(3:2): CTC mode.
+    // CS1(2:0): 1024 prescaling factor.
+    TCCR1B = SET(WGM12)  | SET(CS12) | SET(CS10);
+    // OCIE1A: output comparison A enabled.
+    TIMSK1 = SET(OCIE1A);
+
+    // Interrupts must be disabled when accessing 16-bit registers.
+    DISABLE();
+    // OCR1A(:): counter comparison A value.
+    OCR1A  = FREQ;
+    // Reset timer.
+    TCNT1  = 0;
+    ENABLE();
+}
+
 void setButtonInterrupt(void) {
     // PCIE1: enable PCINT(15:8) interrupts.
     EIMSK  = SET(PCIE1);
