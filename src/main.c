@@ -18,17 +18,13 @@ void blink(__attribute__((unused)) int _x) {
     LCDDR3 ^= 1;
 }
 
-static bool state = false;
 static uint16_t presses = 0;
 
 void button(const int pos) {
-    if (PINB & SET(PINB7)) {
-        state = true;
-    } else if (state) {
+    if (!(PINB & SET(PINB7))) {
         LCDDR13 ^= 1;
         LCDDR18 ^= 1;
         printAt(++presses, pos);
-        state = false;
     }
 }
 
