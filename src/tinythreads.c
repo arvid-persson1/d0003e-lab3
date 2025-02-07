@@ -92,17 +92,15 @@ void spawn(void (* const function)(const int), const int arg) {
     SETSTACK(&newp->context, &newp->stack);
 
     enqueue(newp, &readyQ);
+    yield();
 
     ENABLE();
 }
 
 void yield(void) {
-    DISABLE();
-
+    Thread t = dequeue(&readyQ);
     enqueue(current, &readyQ);
-    dispatch(dequeue(&readyQ));
-
-    ENABLE();
+    dispatch(t);
 }
 
 void lock(Mutex * const m) {

@@ -14,7 +14,7 @@ void primes(const int pos) {
     }
 }
 
-Mutex blinkMutex = MUTEX_INIT;
+Mutex blinkMutex = { true, 0 };
 
 void blink(__attribute__((unused)) int _x) {
     while (true) {
@@ -23,22 +23,18 @@ void blink(__attribute__((unused)) int _x) {
     }
 }
 
-Mutex buttonMutex = MUTEX_INIT;
+Mutex buttonMutex = { true, 0 };
 
 void button(const int pos) {
     LCDDR13 ^= 1;
-    bool state = false;
     uint16_t presses = 0;
 
     while(true) {
         lock(&buttonMutex);
-        if (PINB & SET(PINB7)) {
-            state = true;
-        } else if (state) {
+        if (!(PINB & SET(PINB7))) {
             LCDDR13 ^= 1;
             LCDDR18 ^= 1;
             printAt(++presses, pos);
-            state = false;
         }
     }
 }
@@ -61,9 +57,6 @@ int main() {
     setTimerInterrupt();
     setButtonInterrupt();
 
-    lock(&blinkMutex);
-    lock(&buttonMutex);
-    
     spawn(blink, 0);
     spawn(button, 4);
     primes(0);
