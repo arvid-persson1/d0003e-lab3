@@ -40,8 +40,14 @@ static void initialize(void) {
 }
 
 static void enqueue(const Thread p, Thread * const queue) {
-    p->next = *queue;
-    *queue = p;
+    if (*queue == NULL) {
+        p->next = NULL;
+        *queue = p;
+    } else {
+        Thread q = *queue;
+        *queue = p;
+        p->next = q;
+    }
 }
 
 static Thread dequeue(Thread * const queue) {
@@ -92,17 +98,15 @@ void spawn(void (* const function)(const int), const int arg) {
     SETSTACK(&newp->context, &newp->stack);
 
     enqueue(newp, &readyQ);
+    yield();
 
     ENABLE();
 }
 
 void yield(void) {
-    DISABLE();
-
+    Thread t = dequeue(&freeQ);
     enqueue(current, &readyQ);
-    dispatch(dequeue(&readyQ));
-
-    ENABLE();
+    dispatch(t);
 }
 
 void lock(Mutex * const m) {
