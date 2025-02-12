@@ -117,7 +117,6 @@ ISR(PCINT1_vect) {
         yield();
 }
 
-// Synchronization is omitted; precision is irrelevant.
 static uint_fast8_t ticks = 0;
 
 // Timer.
@@ -127,7 +126,10 @@ ISR(TIMER1_COMPA_vect) {
 }
 
 uint_fast8_t timerRead(void) {
-    return ticks;
+    DISABLE();
+    int tmp = ticks;
+    ENABLEU();
+    return tmp;
 }
 
 void timerReset(void) {
